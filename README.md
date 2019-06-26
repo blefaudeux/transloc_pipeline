@@ -1,7 +1,7 @@
 
 <br>
 
-*Under Construction! (Spring 2016)*
+*Fork from [Robin Meyer's original repo](https://github.com/robinmeyers/transloc_pipeline), trying to fix a couple of issues which crept in over time*
 
 <br>
 

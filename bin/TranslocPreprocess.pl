@@ -27,7 +27,7 @@ select( (select(STDOUT), $| = 1 )[0] );
 
 ##
 ## This program
-## 
+##
 ## run with "--help" for usage information
 ##
 ## Robin Meyers
@@ -43,7 +43,7 @@ sub process_experiment ($);
 sub write_stats_file;
 sub clean_up;
 
-# Global flags and arguments, 
+# Global flags and arguments,
 # Set by command line arguments
 my $read1;
 my $read2;
@@ -67,7 +67,7 @@ my $reverse_adapter = "AGATCGGAAGAGCGTCGTGT";
 my $adapter_fa = "$FindBin::Bin/../ref/IlluminaAdapters-PE.fa";
 
 
-# Global variables 
+# Global variables
 my %stats :shared;
 my %meta;
 my $unmatched = 0;
@@ -120,7 +120,7 @@ if ($paired_end) {
 			}
 
 			my @running = threads->list(threads::running);
-			
+
 			# if there are open threads, create a new one, push it onto list, and exit while loop
 			if (scalar @running < $max_threads) {
 				my $thr = threads->create( sub {
@@ -135,7 +135,7 @@ if ($paired_end) {
 				last;
 			}
 			sleep(5);
-		} 
+		}
 	}
 
 	# waits for all threads to finish
@@ -185,10 +185,10 @@ sub read_in_meta_file {
 			$expt->{library} . "_" . $expt->{sequencing} : $expt->{library};
 
 		$meta{$name} = $expt;
-		
+
 		my %temp_stats_hash :shared;
 		$temp_stats_hash{totreads} = 0;
-		
+
 		$stats{$name} = \%temp_stats_hash;
 	}
 
@@ -294,9 +294,9 @@ sub process_experiment ($) {
 		System("echo \"Running SeqPrep on $expt\" >> $logfile",1);
 
 		my $t0_trim = [gettimeofday];
-							
 
-		my $trim_cmd = join(" ","SeqPrep -f",$meta{$expt}->{R1},"-r",$meta{$expt}->{R2},
+
+		my $trim_cmd = join(" ","seqprep -f",$meta{$expt}->{R1},"-r",$meta{$expt}->{R2},
 														"-1",$meta{$expt}->{R1trim},"-2",$meta{$expt}->{R2trim},
 														"-L $minlen -A $forward_adapter -B $reverse_adapter >> $logfile 2>&1");
 
@@ -395,16 +395,16 @@ sub parse_command_line {
 				"skip-clean" => \$skipclean,
 				"help" => \$help
 		  ) ;
-  
+
   usage() if ($help);
-	
+
 	$meta_file = shift(@ARGV);
 	$outdir = shift(@ARGV);
 
 	#Check options
 	if (defined $indir) {
 		croak "Error: cannot find input directory $indir" unless (-d $indir);
-		croak "Error: cannot define both input directory and non-de-multiplexed reads" if (defined $read1 || defined $read2);		
+		croak "Error: cannot define both input directory and non-de-multiplexed reads" if (defined $read1 || defined $read2);
 	} else {
 		croak "Error: cannot find read 1 $read1 does not exist" unless (-r $read1);
 		unless (-r $read2) {
