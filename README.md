@@ -45,7 +45,7 @@ $ cd $BOWTIE2_INDEXES
 $ wget ftp://ftp.ccb.jhu.edu/pub/data/bowtie2_indexes/hg19.zip
 $ unzip hg19.zip
 $ mkdir -p $GENOME_DB/hg19
-$ bowtie2-inspect hg19 > $GENOME_DB/hg19/hg19.fa 
+$ bowtie2-inspect hg19 > $GENOME_DB/hg19/hg19.fa
 ```
 
 <br>
@@ -67,6 +67,9 @@ $ brew install bowtie2
 
 ### Samtools
 
+**Ubuntu and derivatives** Install Samtools from the repo:
+``$ sudo apt-get install samtools libbio-samtools-perl``
+
 Install [Samtools](http://samtools.sourceforge.net/)
 
 **IMPT:** The perl module that uses the samtools installation requires an older version of samtools. From the (README)[http://cpansearch.perl.org/src/LDS/Bio-SamTools-1.43/README], *"This is a Perl interface to the SAMtools sequence alignment
@@ -76,7 +79,7 @@ structure."*
 
 ### Perl >= 5.16
 
-On **OS X**, I have had good success with the [ActivePerl](http://www.activestate.com/activeperl/downloads) distribution. [Perlbrew](http://perlbrew.pl/) is a good option for a **Linux** machine, especially without root access.
+On **OS X**, I have had good success with the [ActivePerl](http://www.activestate.com/activeperl/downloads) distribution. [Perlbrew](http://perlbrew.pl/) is a good option for a vanilla **Linux** machine, especially without root access. For Ubuntu, you can stick to perl present in the repos (```sudo apt-get install perl```).
 
 ### Bioperl
 
@@ -110,7 +113,7 @@ cpan> force install CJFIELDS/BioPerl-1.6.924.tar.gz
 Other modules (all of which can be installed using cpan install commands)
 
 ```
-cpan > install Getopt::Long Text::CSV List::MoreUtils Data::GUID Interpolation IPC::System::Simple Storable Switch::Plain
+cpan > install Getopt::Long Text::CSV List::MoreUtils Data::GUID Interpolation IPC::System::Simple Storable Switch::Plain File::Which inc::latest
 ```
 
 I have missed a few. Missing modules can be installed the same as above.
@@ -119,6 +122,11 @@ I have missed a few. Missing modules can be installed the same as above.
 
 [SeqPrep](https://github.com/jstjohn/SeqPrep) is used in the pre-processing of the libraries.
 
+**Ubuntu**
+Install it from the repos: ```sudo apt-get install seqprep```
+
+
+**Other**
 ```
 $ git clone https://github.com/jstjohn/SeqPrep.git
 $ cd SeqPrep
@@ -128,6 +136,10 @@ Then add SeqPrep to your `$PATH`.
 
 ### R >= 3.1.2
 
+**Ubuntu**
+Again, just use the version in the repos: ```sudo apt-get install r-base```. You should be able to easily install tons of dependencies by the same way (or using Cran).
+
+**Other**
 Download and install [R](https://cran.r-project.org/)
 
 Load an R session:

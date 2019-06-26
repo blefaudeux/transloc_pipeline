@@ -99,7 +99,7 @@ sub filter_misprimed ($) {
 
 sub filter_freqcut ($) {
   my $read_obj = shift;
-  
+
   my $params = $main::params;
 
   my $tlxs = $read_obj->{tlxs};
@@ -129,7 +129,7 @@ sub filter_largegap ($) {
     if (is_a_junction($tlx)) {
       $tlx->{filters}->{largegap} = max(0,$tlx->{Qstart} - $tlx->{B_Qend} - 1);
     }
-    
+
   }
 
 }
@@ -177,11 +177,11 @@ sub filter_mapqual ($) {
 
       my $min_AS_threshold = $tlx_R1_aln->{AS} + $tlx_R2_aln->{AS} - $min_difference;
 
-      
-      foreach my $R1_aln_ID (keys $R1_alns) {
+
+      foreach my $R1_aln_ID (keys %{ $R1_alns } ) {
         next if $R1_aln_ID eq $tlx->{R1_ID};
 
-        foreach my $R2_aln_ID (keys $R2_alns) {
+        foreach my $R2_aln_ID (keys %{ $R2_alns } ) {
 
           my $R1_aln = $R1_alns->{$R1_aln_ID};
           my $R2_aln = $R2_alns->{$R2_aln_ID};
@@ -192,7 +192,7 @@ sub filter_mapqual ($) {
           $R1_aln->{Read} = "R1";
           $R1_aln->{Overlap} = calculate_fraction_overlap($tlx_R1_aln,$R1_aln);
           $params->{mapqfh}->print(join("\t", @{$R1_aln}{@{$params->{mapq_header}}})."\n");
-          
+
           $R2_aln->{Primary} = 0;
           $R2_aln->{Read} = "R1";
           $R2_aln->{Overlap} = calculate_fraction_overlap($tlx_R2_aln,$R2_aln);
@@ -226,7 +226,7 @@ sub filter_mapqual ($) {
       my $min_AS_threshold = $tlx_R1_aln->{AS} - $min_difference;
 
       # only consider R1 alignments
-      foreach my $R1_aln_ID (keys $R1_alns) {
+      foreach my $R1_aln_ID (keys %{ $R1_alns } ) {
         next if $R1_aln_ID eq $tlx->{R1_ID};
 
         my $R1_aln = $R1_alns->{$R1_aln_ID};
@@ -246,9 +246,9 @@ sub filter_mapqual ($) {
           return;
         }
       }
-    
+
     } else {
-      
+
       $tlx_R2_aln->{Primary} = 1;
       $tlx_R2_aln->{Read} = "R2";
       $tlx_R2_aln->{Overlap} = "";
@@ -263,7 +263,7 @@ sub filter_mapqual ($) {
       my $min_AS_threshold = $tlx_R2_aln->{AS} - $min_difference;
 
       # only consider R2 alignments
-      foreach my $R2_aln_ID (keys $R2_alns) {
+      foreach my $R2_aln_ID (keys %{ $R2_alns } ) {
         next if $R2_aln_ID eq $tlx->{R2_ID};
 
         my $R2_aln = $R2_alns->{$R2_aln_ID};
@@ -292,7 +292,7 @@ sub filter_mapqual ($) {
 
 sub filter_breaksite ($) {
   my $read_obj = shift;
-  
+
   my $tlxs = $read_obj->{tlxs};
   my $i = 0;
   foreach my $tlx (@$tlxs) {

@@ -106,8 +106,8 @@ sub find_optimal_coverage_set ($$) {
   my @graph = ();
   my $OCS_ptr;
 
-  my @R1_alns = sort {$a->{Qstart} <=> $b->{Qstart}} shuffle(values $R1_alns_ref);
-  my @R2_alns = sort {$a->{Qstart} <=> $b->{Qstart}} shuffle(values $R2_alns_ref);
+  my @R1_alns = sort {$a->{Qstart} <=> $b->{Qstart}} shuffle(values %{ $R1_alns_ref } );
+  my @R2_alns = sort {$a->{Qstart} <=> $b->{Qstart}} shuffle(values %{ $R2_alns_ref } );
 
   my $qname = $R1_alns[0]->{QnameShort};
 
@@ -183,7 +183,7 @@ sub find_optimal_coverage_set ($$) {
 
 
   debug_print("searching through R2 alignments",3,$qname);
-  
+
   foreach my $R2_aln (@R2_alns) {
 
     next unless defined $R2_aln && ! $R2_aln->{Unmapped};
@@ -338,7 +338,7 @@ sub score_edge ($;$) {
 
     # node1 and node2 pass tests, calc score
 
-    my $overlap_correction;    
+    my $overlap_correction;
     my $brk_pen;
 
     if ($Rname2 eq "Adapter") {
@@ -352,14 +352,14 @@ sub score_edge ($;$) {
       }
 
       $overlap_correction = $main::params->{match_award} * $query_intersection;
-      
+
       # Add in correction for brksite cassette?
       $brk_pen = $main::params->{brk_pen};
     }
 
     my $R1_AS = defined $node2->{R1} ? $node2->{R1}->{AS} : 0;
     my $R2_AS = defined $node2->{R2} ? $node2->{R2}->{AS} : 0;
-    
+
     my $PE_pen = 0;
 
     if (defined $node2->{R1} && defined $node2->{R2}) {
@@ -369,7 +369,7 @@ sub score_edge ($;$) {
       # But node2 R1 does not make a proper pair with node1 R1,
       # Do not accept
       if (pair_is_proper($node1->{R1},$node2->{R2})) {
-        
+
         if (! pair_is_proper($node1->{R1},$node2->{R1})) {
           debug_print("score=undef; guessing node2 R2 is pair of node1 R1",4,$qname);
           return undef;
@@ -389,7 +389,7 @@ sub score_edge ($;$) {
     debug_print("Overlap correction: ".$overlap_correction,4,$qname);
 
     $score = $node1->{score} + $R1_AS + $R2_AS - $PE_pen - $brk_pen - $overlap_correction;
-    
+
     debug_print("Edge score: ".$score,4,$qname);
 
 
@@ -462,7 +462,7 @@ sub calculate_paired_end_penalty ($$) {
   my $PE_gap = $R1_aln->{Strand} == 1 ?
                 $R2_aln->{Rstart} - $R1_aln->{Rend} - 1 :
                 $R1_aln->{Rstart} - $R2_aln->{Rend} - 1 ;
-  
+
   my $PE_pen = 0;
 
   my $main_penalty = $PE_gap > 0 ? $main::params->{brk_pen} + $main::params->{pe_pen} * $PE_gap/$main::params->{max_pe_gap} : $main::params->{brk_pen};
@@ -534,7 +534,7 @@ sub create_tlxl_entries ($) {
         $tlxl->{QnameShort} = $Qseg->{R2}->{QnameShort};
         $tlxl->{OCS_score} = $Qseg->{score};
         $tlxl->{Rname} = $Qseg->{R2}->{Rname};
-        $tlxl->{Strand} = $Qseg->{R2}->{Strand};        
+        $tlxl->{Strand} = $Qseg->{R2}->{Strand};
       }
       $tlxl->{R2_Qstart} = $Qseg->{R2}->{Qstart};
       $tlxl->{R2_Qend} = $Qseg->{R2}->{Qend};
@@ -601,7 +601,7 @@ sub create_tlx_entries ($$) {
       $Qlen = length($Qseq);
     } else {
       $Qseq = $tlxls->[0]->{R1_Seq};
-      $Qlen = "";    
+      $Qlen = "";
     }
 
     # Set R1 as Qseq and just a one-to-one map for R1 if no merge
@@ -617,7 +617,7 @@ sub create_tlx_entries ($$) {
 
   foreach my $i (0..$#$tlxls) {
     # print "TLX for ".$i."th segment\n";
-    
+
 
     my $tlx = {};
     my $b_tlxl = $tlxls->[$i];
@@ -629,10 +629,10 @@ sub create_tlx_entries ($$) {
     $tlx->{Seq} = $Qseq;
     $tlx->{JuncID} = $i + 1;
 
-    # 
+    #
     $tlx->{Qlen} = $Qlen;
 
-  
+
     # print "B-R1: ".$b_tlxl->{R1_Qstart}."-".$b_tlxl->{R1_Qend}."\n" if defined $b_tlxl->{R1_Qstart};
     # print "B-R2: ".$b_tlxl->{R2_Qstart}."-".$b_tlxl->{R2_Qend}."\n" if defined $b_tlxl->{R2_Qstart};
 
@@ -699,7 +699,7 @@ sub create_tlx_entries ($$) {
 
     $tlx->{B_Cigar} = cigar_array_to_string($tlx->{B_CigarA});
 
-    
+
     if ($i+1 <= $#$tlxls) {
       my $tlxl = $tlxls->[$i+1];
 
@@ -773,7 +773,7 @@ sub create_tlx_entries ($$) {
       } else {
         $tlx->{Junction} = $tlx->{Rend};
       }
-      
+
       $tlx->{J_Seq} = "";
 
     }
@@ -905,7 +905,7 @@ sub merge_alignments ($$) {
     $Rend1 = $tlxl->{R2_Rend};
     $Rstart2 = $tlxl->{R1_Rstart};
     $Rend2 = $tlxl->{R1_Rend};
-  
+
   }
 
   # Retrieve reference sequence
@@ -940,7 +940,7 @@ sub merge_alignments ($$) {
   }
 
 
-  # Slightly tricky... if there is a dovetail at the near end 
+  # Slightly tricky... if there is a dovetail at the near end
   # R1    |------------->
   # R2  <------------------------|
   # We have to push forward on the R2 query so it's caught up
@@ -1205,11 +1205,11 @@ sub merge_alignments ($$) {
   # print join("",map {chr($_+33)} @Qual1)."\n";
   # print join("",@Qseq1)."\n";
   # print join(" ",@Qmap1)."\n";
-  
+
   # print "R2\n";
   # print join("",map {chr($_+33)} @Qual2)."\n";
   # print join("",@Qseq2)."\n";
-  # print join(" ",@Qmap2)."\n";  
+  # print join(" ",@Qmap2)."\n";
 
   # print "merge\n";
   # print "$Qseq\n";
@@ -1226,7 +1226,7 @@ sub merge_alignments ($$) {
 
     # print "reversed\n";
     # print join(" ",@Qmap1)."\n";
-    # print join(" ",@Qmap2)."\n";  
+    # print join(" ",@Qmap2)."\n";
     # print "$Qseq\n";
   }
 
@@ -1240,8 +1240,8 @@ sub split_breaksite_reads ($) {
   my $params = $main::params;
 
 
-  
-  
+
+
 }
 
 
@@ -1258,7 +1258,7 @@ sub find_random_barcode ($$) {
 
 
   if (defined $barcode_length && $barcode_length > 0) {
-    
+
     debug_print("searching for barcode",2,$tlxs->[0]->{QnameShort});
 
     # Search through OCS first
@@ -1267,7 +1267,7 @@ sub find_random_barcode ($$) {
       my $adapter_aln = $tlxs->[$#$tlxs];
       $barcode = substr($adapter_aln->{Seq},$adapter_aln->{Qstart} - $barcode_length - 1,$barcode_length);
     } else {
-      
+
       my $adapter_aln;
 
       foreach my $R2_aln (values %$R2_alns) {
